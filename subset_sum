@@ -1,0 +1,81 @@
+Given an array of positive integers, arr[] and a value, target, determine if there is a subset of the given set with sum equal to given target. 
+
+
+//{ Driver Code Starts
+import java.io.*;
+import java.util.*;
+
+class GFG {
+    public static void main(String args[]) throws IOException {
+        BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+        int t = Integer.parseInt(read.readLine());
+        while (t-- > 0) {
+
+            String input_line[] = read.readLine().trim().split("\\s+");
+            int N = input_line.length;
+            int arr[] = new int[N];
+            for (int i = 0; i < N; i++) arr[i] = Integer.parseInt(input_line[i]);
+            int sum = Integer.parseInt(read.readLine());
+
+            Solution ob = new Solution();
+            if (ob.isSubsetSum(arr, sum))
+                System.out.println("true");
+            else
+                System.out.println("false");
+
+            System.out.println("~");
+        }
+    }
+}
+
+// } Driver Code Ends
+
+
+// User function Template for Java
+
+class Solution {
+    public boolean isSubsetSum(int[] arr, int target) {
+        int n = arr.length;
+
+        // Create a memoization table
+        Boolean[][] memo = new Boolean[n + 1][target + 1];
+
+        // Start the recursive function
+        return solve(arr, n - 1, target, memo);
+    }
+
+    private boolean solve(int[] arr, int index, int target, Boolean[][] memo) {
+        // Base cases
+        if (target == 0) {
+            return true; // A subset with sum 0 exists (empty subset)
+        }
+        if (index < 0) {
+            return false; // No elements left to form the subset
+
+        }
+
+        // Check memo table
+        if (memo[index][target] != null) {
+            return memo[index][target];
+        }
+
+        // Decision to exclude the current element
+        boolean exclude = solve(arr, index - 1, target, memo);
+
+        // Decision to include the current element (if possible)
+        boolean include = false;
+        if (arr[index] <= target) {
+            include = solve(arr, index - 1, target - arr[index], memo);
+        }
+
+        // Store the result in the memo table
+        return memo[index][target] = include || exclude;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] arr = {3, 34, 4, 12, 5, 2};
+        int target = 9;
+        System.out.println(solution.isSubsetSum(arr, target)); // Output: true
+    }
+}

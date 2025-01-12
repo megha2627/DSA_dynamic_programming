@@ -1,0 +1,53 @@
+Given an integer array nums, return true if you can partition the array into two subsets such that the sum of the elements in both subsets is equal or false otherwise
+
+
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum = calculateSum(nums, 0);
+
+        // If the total sum is odd, partitioning is not possible.
+        if (sum % 2 != 0) {
+            return false;
+        }
+
+        int target = sum / 2;
+        Boolean[][] dp = new Boolean[nums.length][target + 1];
+
+        // Start the recursive function with memoization.
+        return canPartitionRecursive(nums, target, 0, dp);
+    }
+
+    // Helper function to calculate the sum using recursion.
+    private int calculateSum(int[] nums, int index) {
+        if (index == nums.length) {
+            return 0;
+        }
+        return nums[index] + calculateSum(nums, index + 1);
+    }
+
+    // Recursive function with memoization.
+    private boolean canPartitionRecursive(int[] nums, int target, int index, Boolean[][] dp) {
+        // Base case: If the target is 0, we found a valid subset.
+        if (target == 0) {
+            return true;
+        }
+
+        // If the index exceeds the array or the target becomes negative, return false.
+        if (index >= nums.length || target < 0) {
+            return false;
+        }
+
+        // If the result is already computed, return it.
+        if (dp[index][target] != null) {
+            return dp[index][target];
+        }
+
+        // Recursive calls:
+        // 1. Include the current element in the subset.
+        // 2. Exclude the current element from the subset.
+        dp[index][target] = canPartitionRecursive(nums, target - nums[index], index + 1, dp) ||
+                            canPartitionRecursive(nums, target, index + 1, dp);
+
+        return dp[index][target];
+    }
+}

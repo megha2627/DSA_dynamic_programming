@@ -1,0 +1,39 @@
+Given an integer array height[] where height[i] represents the height of the i-th stair, a frog starts from the first stair and wants to reach the top. From any stair i, the frog has two options: it can either jump to the (i+1)th stair or the (i+2)th stair. The cost of a jump is the absolute difference in height between the two stairs. Determine the minimum total cost required for the frog to reach the top.
+
+
+
+class Solution {
+    Integer[] dp;
+
+    public int minimumEnergy(int[] height, int N) {
+        // Initialize the DP array to store minimum energy for each stair
+        dp = new Integer[N];
+        Arrays.fill(dp, -1);
+        return solve(N - 1, height);
+    }
+
+    public int solve(int i, int[] height) {
+        // Base case: if we're at the first stair, no energy is required
+        if (i == 0) {
+            return 0;
+        }
+       
+        // If already computed, return the stored result
+        if (dp[i] != -1) {
+            return dp[i];
+        }
+
+        // Jump from the previous stair
+        int oneStep = solve(i - 1, height) + Math.abs(height[i] - height[i - 1]);
+
+        // Jump from two stairs back (if possible)
+        int twoStep = Integer.MAX_VALUE;
+        if (i > 1) {
+            twoStep = solve(i - 2, height) + Math.abs(height[i] - height[i - 2]);
+        }
+
+        // Store the result in dp array and return the minimum of both
+        dp[i] = Math.min(oneStep, twoStep);
+        return dp[i];
+    }
+}

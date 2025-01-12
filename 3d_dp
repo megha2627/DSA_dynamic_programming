@@ -1,0 +1,57 @@
+You are given an n rows and m cols matrix grid representing a field of chocolates where grid[i][j] represents the number of chocolates that you can collect from the (i, j) cell.
+
+You have two robots that can collect chocolates for you:
+
+Robot #1 is located at the top-left corner (0, 0), and
+Robot #2 is located at the top-right corner (0, cols - 1).
+
+
+class Solution {
+    int m1, n1;
+    int[][][] t;
+    int[] colDir = {-1, 0, 1};
+
+    boolean isSafe(int i) {
+        return i >= 0 && i < n1;
+    }
+
+    int cherry(int[][] grid, int row, int c1, int c2) {
+        if (row >= m1)
+            return 0;
+
+        if (t[row][c1][c2] != -1) {
+            return t[row][c1][c2];
+        }
+
+        int count = grid[row][c1];
+        if (c1 != c2) {
+            count += grid[row][c2];
+        }
+
+        int ans = 0;
+        for (int x : colDir) {
+            for (int y : colDir) {
+                int c1_ = x + c1;
+                int c2_ = y + c2;
+
+                if (isSafe(c1_) && isSafe(c2_)) {
+                    ans = Math.max(ans, cherry(grid, row + 1, c1_, c2_));
+                }
+            }
+        }
+
+        return t[row][c1][c2] = count + ans;
+    }
+
+    public int solve(int n, int m ,int[][] grid) {
+        m1 = grid.length;
+        n1 = grid[0].length;
+        t = new int[71][71][71];
+        for (int[][] row : t) {
+            for (int[] col : row) {
+                Arrays.fill(col, -1);
+            }
+        }
+        return cherry(grid, 0, 0, n1 - 1);
+    }
+}

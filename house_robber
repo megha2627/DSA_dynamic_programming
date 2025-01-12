@@ -1,0 +1,42 @@
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All houses at this place are arranged in a circle. That means the first house is the neighbor of the last one. Meanwhile, adjacent houses have a security system connected, and it will automatically contact the police if two adjacent houses were broken into on the same night.
+
+Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the polic
+
+
+class Solution {
+    public int rob(int[] nums) {
+        int n = nums.length;
+        if (n == 0) {
+            return 0;
+        }
+        if (n == 1) {
+            return nums[0];
+        }
+        if (n == 2) {
+            return Math.max(nums[0], nums[1]);
+        }
+
+        // Solve for two scenarios: excluding the last house or excluding the first house
+        ArrayList<Integer> s1 = new ArrayList<>(Collections.nCopies(n, -1));
+        int n1 = solve(nums, s1, 0, n - 2);
+
+        ArrayList<Integer> s2 = new ArrayList<>(Collections.nCopies(n, -1));
+        int n2 = solve(nums, s2, 1, n - 1);
+
+        return Math.max(n1, n2);
+    }
+
+    public int solve(int[] nums, ArrayList<Integer> s, int i, int n) {
+        if (i > n) {
+            return 0;
+        }
+        if (s.get(i) != -1) {
+            return s.get(i);
+        }
+        int s1 = nums[i] + solve(nums, s, i + 2, n);
+        int s2 = solve(nums, s, i + 1, n);
+        int result = Math.max(s1, s2);
+        s.set(i, result); // Fix: Set the value at index `i` instead of `n`
+        return result;
+    }
+}

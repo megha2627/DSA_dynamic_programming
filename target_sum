@@ -1,0 +1,54 @@
+You are given an integer array nums and an integer target.
+
+You want to build an expression out of nums by adding one of the symbols '+' and '-' before each integer in nums and then concatenate all the integers.
+
+For example, if nums = [2, 1], you can add a '+' before 2 and a '-' before 1 and concatenate them to build the expression "+2-1".
+Return the number of different expressions that you can build, which evaluates to target.
+
+
+class Solution {
+    int[][] dp;
+    int offset; // Offset to handle negative sums
+
+    public int findTargetSumWays(int[] nums, int target) {
+        int sum1 = 0;
+        for (int num : nums) {
+            sum1 += num;
+        }
+        // If the target is out of the possible range, return 0
+        if (Math.abs(target) > sum1) {
+            return 0;
+        }
+
+        // Offset to handle negative sums
+        offset = sum1;
+
+        // Initialize dp array
+        dp = new int[nums.length][2 * sum1 + 1];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+
+        // Start the recursion
+        return solve(nums, target, 0, 0);
+    }
+
+    public int solve(int[] nums, int target, int i, int currentSum) {
+        // Base case
+        if (i == nums.length) {
+            return currentSum == target ? 1 : 0;
+        }
+
+        // Memoization
+        if (dp[i][currentSum + offset] != -1) {
+            return dp[i][currentSum + offset];
+        }
+
+        // Recurrence relation
+        int add = solve(nums, target, i + 1, currentSum + nums[i]);
+        int subtract = solve(nums, target, i + 1, currentSum - nums[i]);
+
+        dp[i][currentSum + offset] = add + subtract;
+        return dp[i][currentSum + offset];
+    }
+}
